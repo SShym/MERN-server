@@ -3,7 +3,7 @@ const Router = express();
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = require('../jwt-secret/config');
+const JWT_SECRET = require('../jwt/config');
 
 Router.post('/register', async (req, res) => {
   try {

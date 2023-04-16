@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = require('../jwt-secret/config');
+const JWT_SECRET = require('../jwt/config');
 
 const auth = async (req, res, next) => {
     try {  

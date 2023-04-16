@@ -5,7 +5,7 @@ const Router = express();
 const cloudinary = require("cloudinary");
 const upload = require('../middleware/imgUpload');
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = require('../jwt-secret/config');
+const JWT_SECRET = require('../jwt/config');
 
 cloudinary.config({
   cloud_name: "dotmufoiy",
