@@ -52,7 +52,7 @@ Router.get('/user-skills/:userId', async (req, res) => {
   }
 });
 
-Router.patch('/delete-skill', async (req, res) => {
+Router.patch('/delete-skill', auth, async (req, res) => {
   try {
     const { skill } = req.body;
 
@@ -68,7 +68,7 @@ Router.patch('/delete-skill', async (req, res) => {
   }
 });
 
-Router.post('/set-user-avatar', upload, async (req, res) => {
+Router.post('/set-user-avatar', auth, upload, async (req, res) => {
   try {
     const user = await User.findById(req.body.id);
 
@@ -90,7 +90,7 @@ Router.post('/set-user-avatar', upload, async (req, res) => {
   }
 });
 
-Router.put('/change-user-name', async (req, res) => {
+Router.put('/change-user-name', auth, async (req, res) => {
   try {
     const { userId, userName } = req.body;
 
