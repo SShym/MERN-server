@@ -112,7 +112,7 @@ Router.post('/google-auth',  async (req, res) => {
       });
     }
   } catch (error) {
-    res.status(500).json({ message: process.env.JWT_SECRET });
+    res.status(500).json({ message: `${process.env.JWT_SECRET}` });
   }  
 });
 
