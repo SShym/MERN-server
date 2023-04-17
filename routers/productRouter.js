@@ -5,7 +5,6 @@ const Router = express();
 const cloudinary = require("cloudinary");
 const upload = require('../middleware/imgUpload');
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = require('../jwt/config');
 
 cloudinary.config({
   cloud_name: "dotmufoiy",
@@ -72,7 +71,7 @@ Router.post('/set-user-avatar', auth, upload, async (req, res) => {
   try {
     const user = await User.findById(req.body.id);
 
-    const token = jwt.sign({ userId: user._id }, JWT_SECRET, {});
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {});
 
     user.avatarId && cloudinary.v2.uploader.destroy(user.avatarId)
 
@@ -94,7 +93,7 @@ Router.put('/change-user-name', auth, async (req, res) => {
   try {
     const { userId, userName } = req.body;
 
-    const token = jwt.sign({ userId }, JWT_SECRET, {});
+    const token = jwt.sign({ userId }, process.env.JWT_SECRET, {});
 
     const updatedUser = await User.findOneAndUpdate(
       { _id: userId },

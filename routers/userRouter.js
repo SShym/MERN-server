@@ -3,7 +3,6 @@ const Router = express();
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = require('../jwt/config');
 
 Router.post('/register', async (req, res) => {
   try {
@@ -27,7 +26,7 @@ Router.post('/register', async (req, res) => {
   
     await user.save();
 
-    const token = jwt.sign({ userId: user._id }, JWT_SECRET);
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
 
     res.json({ token, user: { 
       id: user._id, 
@@ -62,7 +61,7 @@ Router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ userId: user._id }, JWT_SECRET, {});
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {});
 
     res.json({ token, user: { 
       id: user._id, 
@@ -81,7 +80,7 @@ Router.post('/google-auth',  async (req, res) => {
     const user = await User.findOne({ email });
   
     if (user) {
-      const token = jwt.sign({ userId: user._id }, JWT_SECRET, {});
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {});
   
       res.status(200).json({ 
         user: { 
@@ -100,7 +99,7 @@ Router.post('/google-auth',  async (req, res) => {
         avatar
       });
   
-      const token = jwt.sign({ userId: newUser._id }, JWT_SECRET, {});
+      const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, {});
   
       res.status(201).json({ 
         user: { 
