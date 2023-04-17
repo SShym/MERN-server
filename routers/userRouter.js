@@ -65,7 +65,6 @@ Router.post('/register-via-phone', async (req, res) => {
       name,
     }});
   } catch(error){
-    console.log(error)
     res.status(400).send({ error: 'Error while registration' });
   }
 });
@@ -158,7 +157,6 @@ Router.post('/login-via-phone', async (req, res) => {
       }
     });
   } catch(error){
-    console.log(error)
     res.status(400).send({ error: 'Error during authorization' });
   }
 });
