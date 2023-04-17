@@ -3,6 +3,10 @@ const Router = express();
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const client = require('twilio')(
+  process.env.TWILIO_ACCOUNT_SID, 
+  process.env.TWILIO_AUTH_TOKEN
+);
 
 Router.post('/register', async (req, res) => {
   try {
@@ -39,6 +43,65 @@ Router.post('/register', async (req, res) => {
   }
 });
 
+Router.post('/register-via-phone', async (req, res) => {
+  try {
+    const { phone, name } = req.body;
+
+    const userExists = await User.findOne({ phone });
+
+    if (userExists) {
+      return res.status(400).json({ message: 'User is already exists' });
+    }
+
+    const user = new User({ name, phone });
+  
+    await user.save();
+
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {});
+
+    res.json({ token, user: { 
+      id: user._id, 
+      phone, 
+      name,
+    }});
+  } catch(error){
+    console.log(error)
+    res.status(400).send({ error: 'Error while registration' });
+  }
+});
+
+Router.post('/send-verify-code', async (req, res) => {
+  try {
+    const { phone, authMode } = req.body;
+
+    const user = await User.findOne({ phone });
+
+    if(authMode === 'login' && !user){
+      return res.status(401).json({ message: `User doesn't exists` });
+    }
+
+    if(authMode === 'register' && user){
+      return res.status(401).json({ message: `User is already exists` });
+    }
+
+    const verificationCode = Math.floor(100000 + Math.random() * 900000); 
+
+    await client.messages.create({
+      to: phone,
+      from: '+16206788897',
+      body: verificationCode
+    })
+
+    res.status(200).json({ code: verificationCode });
+  } catch(error){
+    if(error.message.includes('is not a valid phone')){
+      res.status(400).send({ message: 'The number is not a valid!' })
+    } else {
+      res.status(400).send({ message: error.message })  
+    }
+  }
+});
+
 Router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -66,9 +129,36 @@ Router.post('/login', async (req, res) => {
     res.json({ token, user: { 
       id: user._id, 
       name: user.name, 
+      avatar: user.avatar,
       email: user.email 
     }});
   } catch(error){
+    res.status(400).send({ error: 'Error during authorization' });
+  }
+});
+
+Router.post('/login-via-phone', async (req, res) => {
+  try {
+    const { phone } = req.body;
+
+    const user = await User.findOne({ phone });
+
+    if (!user) {
+      return res.status(401).json({ message: `User doesn't exists` });
+    }
+
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {});
+
+    res.json({ token, 
+      user: { 
+        id: user._id,
+        phone: user.phone, 
+        avatar: user.avatar,
+        name: user.name, 
+      }
+    });
+  } catch(error){
+    console.log(error)
     res.status(400).send({ error: 'Error during authorization' });
   }
 });
