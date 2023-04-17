@@ -99,7 +99,7 @@ Router.post('/google-auth',  async (req, res) => {
         avatar
       });
   
-      const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, {});
+      const token = jwt.sign({ userId: newUser._id }, 'jwt-secret', {});
   
       res.status(201).json({ 
         user: { 
@@ -112,7 +112,7 @@ Router.post('/google-auth',  async (req, res) => {
       });
     }
   } catch (error) {
-    res.status(500).json({ message: `${process.env.JWT_SECRET}` });
+    res.status(500).json({ message: `Error` });
   }  
 });
 
