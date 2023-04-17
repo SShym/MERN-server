@@ -26,7 +26,7 @@ Router.post('/register', async (req, res) => {
   
     await user.save();
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {});
 
     res.json({ token, user: { 
       id: user._id, 
@@ -112,7 +112,7 @@ Router.post('/google-auth',  async (req, res) => {
       });
     }
   } catch (error) {
-    res.status(500).json({ message: "Something went wrong!" });
+    res.status(500).json({ message: process.env.JWT_SECRET });
   }  
 });
 
