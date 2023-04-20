@@ -163,7 +163,7 @@ Router.post('/login-via-phone', async (req, res) => {
 
 Router.post('/google-auth',  async (req, res) => {
   try {
-    const { id, email, name, avatar } = req.body.user;
+    const { email, name, avatar } = req.body.user;
 
     const user = await User.findOne({ email });
   
@@ -181,7 +181,6 @@ Router.post('/google-auth',  async (req, res) => {
       });
     } else {
       const newUser = await User.create({ 
-        id,
         email,
         name,
         avatar
